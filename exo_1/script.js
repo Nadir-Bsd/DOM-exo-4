@@ -34,6 +34,18 @@ const boxs = document.querySelectorAll(".lgn");
 boxs.forEach(element => {
     element.addEventListener("click", colorChange);
 });
+/**
+ * function who check if box exist, if it exist return classlist of de box else return false
+ * @param {*} value: string 
+ * @returns value.classList || false
+ */
+function isExist(value) {
+    if (value && value.nodeType === Node.ELEMENT_NODE) {
+        return value.classList;
+    } else {
+        return undefined;
+    };
+};
 
 /**
  * return the subling element of the target in the direction selected else return false
@@ -50,20 +62,6 @@ function calculSibling(targetBox, direction) {
     };
 };
 
-
-/**
- * function who check if box exist, if it exist return classlist of de box else return false
- * @param {*} value: string 
- * @returns value.classList || false
- */
-function isExist(value) {
-    if (value && value.nodeType === Node.ELEMENT_NODE) {
-        return value.classList;
-    } else {
-        return false;
-    };
-};
-
 /**
  * function who check if previous or next element have a different color
  * @param {*} value: string 
@@ -74,17 +72,37 @@ function checkSameColorAround(targetBox, direction) {
     
     // get siblings box classList
     let siblingsBoxColor = calculSibling(targetBox, direction);
+    
+    // chack if la box exist
+    if(siblingsBoxColor !== undefined){
 
-    // check la couleur du carre dans la direction
-    if(siblingsBoxColor[siblingsBoxColor.length -1] === targetBox.classList[targetBox.classList.length -1]){
-        if(siblingsBoxColor[siblingsBoxColor.length -1] == "box-base-bg" && targetBox.classList[targetBox.classList.length -1] == "box-base-bg"){
-            return false;
+        // if target box is difrent of the bg-base
+        if(targetBox.classList[targetBox.classList.length -1] !== "box-base-bg"){
+
+            // check la couleur du carre dans la direction est la meme que la target
+            if(siblingsBoxColor[siblingsBoxColor.length -1] === targetBox.classList[targetBox.classList.length -1]){
+                // you can change the color
+                return console.log("same");
+            }else {
+                // you can change the color
+                console.log("you can change the color");
+                return true;
+            };
         }else {
-            return true;
+            // you can change the color
+            console.log("target box is on base bg, do what ever you want");
         };
-    }else {
-        return false;
+
+    }else{
+        console.log("is undefined");
+        return undefined;
     };
+
+
+
+
+
+
 };
 
 /**
@@ -101,17 +119,23 @@ function colorChange(event) {
 
     for(let i = 0; i < directions.length; i += 1){
         // get casse check exist, same color else change bg
+        console.log(checkSameColorAround(targetBox, directions[i]));
         if(checkSameColorAround(targetBox, directions[i]) === undefined){
             console.log(`il n'y a pas de carre dans cette direction: ${directions[i]}`);
             continue;
         }else if(checkSameColorAround(targetBox, directions[i])) {
             // cree une animation qui montre qu'on peux pas changer la couleur
             console.log(`vous etes de meme couleur que le carre dans la direction: ${directions[i]}`);
-        }else{
+            return;
+        }else if(checkSameColorAround(targetBox, directions[i]) === false){
+            // console.log("false1");
+        }
+        else{
             // remove actuel class color
-            targetBox.classList.remove("box-base-bg");
+            targetBox.classList.remove(targetBox.classList.length -1);
             // change class color
             targetBox.classList.add("box-green-bg");
+            return;
         };
     };
 };
